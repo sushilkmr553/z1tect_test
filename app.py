@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import requests
+import streamlit as st
 
 app = Flask(__name__)
 OMDB_API_KEY = "c7ec0b49"
@@ -39,5 +40,14 @@ def movie_detail(movie_id):
         return jsonify({"error": data.get("Error", "Movie not found")}), 404
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+def run_flask():
+    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
+
+# Start Flask server
+thread = threading.Thread(target=run_flask)
+thread.daemon = True
+thread.start()
+
+# Streamlit App
+st.title("Streamlit with Flask")
+st.write("Flask is running in the background!")
