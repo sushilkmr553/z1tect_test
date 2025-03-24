@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Movie Search</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+            }
+            .movie-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .movie {
+                margin: 10px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                width: 200px;
+            }
+            .movie img {
+                width: 100%;
+                height: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Movie Search App</h1>
+        <input type="text" id="search" placeholder="Enter movie title..." />
+        <button onclick="searchMovies()">Search</button>
+        <div class="movie-container" id="results"></div>
+
+        <script>
+            function searchMovies() {
+                let query = document.getElementById("search").value;
+                if (!query) return;
+
+                fetch(`/search?q=${query}`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        let resultsDiv = document.getElementById("results");
+                        resultsDiv.innerHTML = "";
+
+                        if (data.error) {
+                            resultsDiv.innerHTML = `<p>${data.error}</p>`;
+                            return;
+                        }
+
+                        data.forEach((movie) => {
+                            let movieDiv = document.createElement("div");
+                            movieDiv.className = "movie";
+                            movieDiv.innerHTML = `
+                            <img src="${movie.Poster}" alt="${movie.Title}">
+                            <h3>${movie.Title} (${movie.Year})</h3>
+                            <button onclick="viewDetails('${movie.imdbID}')">Details</button>
+                        `;
+                            resultsDiv.appendChild(movieDiv);
+                        });
+                    });
+            }
+
+            function viewDetails(movieId) {
+                fetch(`/movie/${movieId}`)
+                    .then((response) => response.json())
+                    .then((movie) => {
+                        alert(
+                            `Title: ${movie.Title}\nYear: ${movie.Year}\nPlot: ${movie.Plot}\nActors: ${movie.Actors}`
+                        );
+                    });
+            }
+        </script>
+    </body>
+</html>
