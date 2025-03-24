@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 import streamlit as st
+import threading
 
 app = Flask(__name__)
 OMDB_API_KEY = "c7ec0b49"
